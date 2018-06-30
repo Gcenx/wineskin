@@ -124,18 +124,6 @@ NSFileManager *fm;
     [WinetricksNoLogsButton setEnabled:state];
     [disableCPUsCheckBoxButton setEnabled:state];
     [winedbgDisabledButton setEnabled:state];
-
-    //Use System XQuartz and ForceQuartzWM disabled unless XQuartz is installed
-    if ([NSComputerInformation isSystemMacOsEqualOrSuperiorTo:@"10.8"] && ![fm fileExistsAtPath:@"/Applications/Utilities/XQuartz.app/Contents/MacOS/X11.bin"])
-    {
-        [forceSystemXQuartzButton setEnabled:NO];
-        [forceWrapperQuartzWMButton setEnabled:NO];
-    }
-    else
-    {
-        [forceSystemXQuartzButton setEnabled:state];
-        [forceWrapperQuartzWMButton setEnabled:state];
-    }
     
     // TODO: The code below seems to be causing a crash sometimes. Remove?
     if (state) {
@@ -516,6 +504,13 @@ NSFileManager *fm;
 }
 - (void)loadScreenOptionsData
 {
+    if (![fm fileExistsAtPath:@"/Applications/Utilities/XQuartz.app/Contents/MacOS/X11.bin"])
+    {
+        [useX11RadioButton setEnabled:NO];
+        [useX11RadioButton setState:false];
+        [macDriverX11TabView selectTabViewItemAtIndex:0];
+        [NSWineskinPortDataWriter saveMacDriver:true atPort:portManager];
+    }
     NSString* engine = [NSPortDataLoader engineOfPortAtPath:self.wrapperPath];
     
     BOOL retinaMode = [NSPortDataLoader retinaModeIsEnabledAtPort:self.wrapperPath withEngine:engine];
@@ -770,9 +765,8 @@ NSFileManager *fm;
         //sends kill command to winesever, this then cause winesever to kill everything without causing registry corruption
         [self runWineskinLauncherWithDisabledButtonsWithFlag:@"WSS-wineserverkill"];
         
-        //kill WineskinLauncher WineskinX11
+        //kill WineskinLauncher
         NSMutableArray *pidsToKill = [[NSMutableArray alloc] init];
-        [pidsToKill addObjectsFromArray:[[self systemCommand:[NSString stringWithFormat:@"ps ax | grep \"%@\" | grep WineskinX11 | awk \"{print \\$1}\"",self.wrapperPath]] componentsSeparatedByString:@"\n"]];
         [pidsToKill addObjectsFromArray:[[self systemCommand:[NSString stringWithFormat:@"ps ax | grep \"%@\" | grep WineskinLauncher | awk \"{print \\$1}\"",self.wrapperPath]] componentsSeparatedByString:@"\n"]];
         
         for (NSString *pid in pidsToKill)
@@ -860,25 +854,6 @@ NSFileManager *fm;
     [modifyMappingsButton         setEnabled:[mapUserFoldersCheckBoxButton state]];
     [enableWinetricksSilentButton       setState:[[portManager plistObjectForKey:WINESKIN_WRAPPER_PLIST_KEY_WINETRICKS_SILENT] intValue]];
     [WinetricksNoLogsButton       setState:[[portManager plistObjectForKey:WINESKIN_WRAPPER_PLIST_KEY_WINETRICKS_NOLOGS] intValue]];
-
-    //Use System XQuartz and ForceQuartzWM disabled unless XQuartz is installed
-    if ([NSComputerInformation isSystemMacOsEqualOrSuperiorTo:@"10.8"] && ![fm fileExistsAtPath:@"/Applications/Utilities/XQuartz.app/Contents/MacOS/X11.bin"])
-    {
-        [forceSystemXQuartzButton setEnabled:NO];
-        [forceSystemXQuartzButton setState:0];
-        [portManager setPlistObject:@([forceSystemXQuartzButton state]) forKey:WINESKIN_WRAPPER_PLIST_KEY_USE_XQUARTZ];
-        [forceWrapperQuartzWMButton setEnabled:NO];
-        [forceWrapperQuartzWMButton setState:0];
-        [portManager setPlistObject:@([forceWrapperQuartzWMButton state]) forKey:WINESKIN_WRAPPER_PLIST_KEY_DECORATE_WINDOW];
-        [portManager synchronizePlist];
-    }
-    else
-    {
-        [forceSystemXQuartzButton setEnabled:YES];
-        [forceSystemXQuartzButton         setState:[[portManager plistObjectForKey:WINESKIN_WRAPPER_PLIST_KEY_USE_XQUARTZ] intValue]];
-        [forceWrapperQuartzWMButton setEnabled:YES];
-        [forceWrapperQuartzWMButton       setState:[[portManager plistObjectForKey:WINESKIN_WRAPPER_PLIST_KEY_DECORATE_WINDOW] intValue]];
-    }
     
     [disableCPUsCheckBoxButton        setState:[[portManager plistObjectForKey:WINESKIN_WRAPPER_PLIST_KEY_SINGLE_CPU] intValue]];
 	[alwaysMakeLogFilesCheckBoxButton setState:[[portManager plistObjectForKey:WINESKIN_WRAPPER_PLIST_KEY_DEBUG_MODE] intValue]];
@@ -1063,16 +1038,6 @@ NSFileManager *fm;
     [modifyMappingsDownloadsTextField  setStringValue:[portManager plistObjectForKey:@"Symlink Downloads"]];
 	[modifyMappingsWindow makeKeyAndOrderFront:self];
 	[advancedWindow orderOut:self];
-}
-- (IBAction)forceWrapperQuartzWMButtonPressed:(id)sender
-{
-    [portManager setPlistObject:@([forceWrapperQuartzWMButton state]) forKey:WINESKIN_WRAPPER_PLIST_KEY_DECORATE_WINDOW];
-    [portManager synchronizePlist];
-}
-- (IBAction)forceSystemXQuartzButtonPressed:(id)sender
-{
-    [portManager setPlistObject:@([forceSystemXQuartzButton state]) forKey:WINESKIN_WRAPPER_PLIST_KEY_USE_XQUARTZ];
-    [portManager synchronizePlist];
 }
 //*************************************************************
 //**************** Advanced Menu - Tools Tab ******************
@@ -2002,7 +1967,7 @@ NSFileManager *fm;
 	}
     
 	//confirm wrapper change
-    if ([NSAlert showBooleanAlertOfType:NSAlertTypeWarning withMessage:@"Are you sure you want to do this update? It will change out the wrappers main Wineskin files with newer copies from whatever Master Wrapper you have installed with Wineskin Winery. The following files/folders will be replaced in the wrapper:\nWineskin.app\nContents/MacOS\nContents/Frameworks\nContents/Resources/English.lproj/MainMenu.nib\nContents/Resources/English.lproj/main.nib" withDefault:NO] == false)
+    if ([NSAlert showBooleanAlertOfType:NSAlertTypeWarning withMessage:@"Are you sure you want to do this update? It will change out the wrappers main Wineskin files with newer copies from whatever Master Wrapper you have installed with Wineskin Winery. The following files/folders will be replaced in the wrapper:\nWineskin.app\nContents/MacOS\nContents/Frameworks\nContents/Resources/English.lproj" withDefault:NO] == false)
     {
         return;
     }
@@ -2061,10 +2026,25 @@ NSFileManager *fm;
 	//delete old WineskinLauncher.nib
     NSString* oldNibPath = [NSString stringWithFormat:@"%@/Contents/Resources/WineskinLauncher.nib",self.wrapperPath];
     if ([fm fileExistsAtPath:oldNibPath]) [fm removeItemAtPath:oldNibPath];
+
+    //delete old WineskinMenuScripts folder
+    NSString* oldWineskinMenuScriptsPath = [NSString stringWithFormat:@"%@/Contents/Resources/WineskinMenuScripts",self.wrapperPath];
+    if ([fm fileExistsAtPath:oldWineskinMenuScriptsPath]) [fm removeItemAtPath:oldWineskinMenuScriptsPath];
     
-    //copy new MainMenu.nib
-    [self replaceFile:@"/Contents/Resources/English.lproj/MainMenu.nib" withVersionFromMasterWrapper:masterWrapperName];
-	
+    //delete old WineskinShutdownScript
+    NSString* WineskinShutdownScriptPath = [NSString stringWithFormat:@"%@/Contents/Resources/WineskinShutdownScript",self.wrapperPath];
+    if ([fm fileExistsAtPath:WineskinShutdownScriptPath]) [fm removeItemAtPath:WineskinShutdownScriptPath];
+    
+    //delete old WineskinStartupScript
+    NSString* WineskinStartupScriptPath = [NSString stringWithFormat:@"%@/Contents/Resources/WineskinStartupScript",self.wrapperPath];
+    if ([fm fileExistsAtPath:WineskinStartupScriptPath]) [fm removeItemAtPath:WineskinStartupScriptPath];
+    
+    //delete old English.lproj, and copy in new
+    [self replaceFile:@"/Contents/Resources/English.lproj" withVersionFromMasterWrapper:masterWrapperName];
+    
+    //copy new Scripts folder
+    [self replaceFile:@"/Contents/Resources/Scripts" withVersionFromMasterWrapper:masterWrapperName];
+
     //edit Info.plist to new wrapper version, replace - with spaces, and dump .app
 	[portManager setPlistObject:[[masterWrapperName stringByReplacingOccurrencesOfString:@".app" withString:@""] stringByReplacingOccurrencesOfString:@"-" withString:@" "] forKey:WINESKIN_WRAPPER_PLIST_KEY_WINESKIN_VERSION];
 	
@@ -2088,9 +2068,6 @@ NSFileManager *fm;
     
 	//move wswine.bundle back into Frameworks
 	[fm moveItemAtPath:wswineBundleTempPath toPath:wswineBundleOriginalPath];
-    
-	//change out main.nib
-    [self replaceFile:@"/Contents/Resources/English.lproj/main.nib" withVersionFromMasterWrapper:masterWrapperName];
     
 	//open new Wineskin.app
 	[self systemCommand:@"/usr/bin/open" withArgs:@[[NSString stringWithFormat:@"%@/Wineskin.app",self.wrapperPath]]];
