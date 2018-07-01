@@ -16,6 +16,7 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		A187D57320E97AE400C853B0 /* Scripts in Resources */ = {isa = PBXBuildFile; fileRef = A187D57220E97AE400C853B0 /* Scripts */; };
 		A8C23E5A18DB810500ACD355 /* WineStart.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C23E5918DB810500ACD355 /* WineStart.m */; };
 		D9EB7D4120B22ED5005D3308 /* ObjectiveC_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9EB7D3A20B22EA1005D3308 /* ObjectiveC_Extension.framework */; };
 		D9EB7D4220B22ED5005D3308 /* ObjectiveC_Extension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D9EB7D3A20B22EA1005D3308 /* ObjectiveC_Extension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -80,6 +81,7 @@
 		55987E211F0412F40035C5C1 /* NSPortDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSPortDataLoader.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* WineskinLauncher-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WineskinLauncher-Info.plist"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* WineskinLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WineskinLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A187D57220E97AE400C853B0 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		A8C23E5818DB810500ACD355 /* WineStart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WineStart.h; sourceTree = "<group>"; };
 		A8C23E5918DB810500ACD355 /* WineStart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WineStart.m; sourceTree = "<group>"; };
 		D9EB7D3420B22EA1005D3308 /* ObjectiveC_Extension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjectiveC_Extension.xcodeproj; path = ../Carthage/Checkouts/ObjectiveC_Extension/ObjectiveC_Extension.xcodeproj; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A187D57220E97AE400C853B0 /* Scripts */,
 				8D1107310486CEB800E47090 /* WineskinLauncher-Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
@@ -295,6 +298,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A187D57320E97AE400C853B0 /* Scripts in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 			);
