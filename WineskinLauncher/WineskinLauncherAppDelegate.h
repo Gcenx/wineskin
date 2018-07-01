@@ -131,19 +131,19 @@
 //returns true if Wineserver for this wrapper is running
 - (BOOL)isWineserverRunning;
 
-//fix wine and wineserver names in engines to be unique for launch
+//fix check files inside wswine.bundle/bin then fix names correctly
 - (void)fixWineExecutableNames;
 
 //fix standard wine and wineserver names
 - (void)fixWine32ExecutableNames;
 
-//fix standard wine and wineserver names
+//fix standard wine, wine64 and wineserver names
 - (void)fixWine64ExecutableNames;
 
-//fix staging names
+//fix wine-preloader & wineserver names
 - (void)fixWineStagingExecutableNames;
 
-//fix staging64 names
+//fix wine-preloader, wine64-preloader & wineserver names
 - (void)fixWineStaging64ExecutableNames;
 
 //start wine

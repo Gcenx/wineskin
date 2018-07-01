@@ -2039,7 +2039,7 @@ NSFileManager *fm;
     NSString* WineskinStartupScriptPath = [NSString stringWithFormat:@"%@/Contents/Resources/WineskinStartupScript",self.wrapperPath];
     if ([fm fileExistsAtPath:WineskinStartupScriptPath]) [fm removeItemAtPath:WineskinStartupScriptPath];
     
-    //delete old English.lproj, and copy in new
+    //copy new English.lproj, and copy in new
     [self replaceFile:@"/Contents/Resources/English.lproj" withVersionFromMasterWrapper:masterWrapperName];
     
     //copy new Scripts folder
