@@ -58,10 +58,10 @@ As you may have already noticed, this is not the [original Wineskin repository](
 
 ## List of modifications for the Master Wrapper (WineskinLauncher)
 - Many fixes when dealing with newest engines.
+- WineskinX11 has been dropped.
 
 ## List of desired modifications for the Master Wrapper (WineskinLauncher)
 - A different Master Wrapper for macOS 10.6 and 10.7;
-- WineskinX11 should be dropped.
 
 ## License
 Keeping the same as the original material, LGPL 2.1 is the license of that project. You can find more details about that in the LICENSE file.
