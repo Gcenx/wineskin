@@ -9,14 +9,34 @@
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		256AC3DA0F4B6AC300CF3369 /* Wineskin_WineryAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* Wineskin_WineryAppDelegate.m */; };
+		4E45372020E7DA16005D794E /* NSWineskinEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E45371F20E7DA16005D794E /* NSWineskinEngine.m */; };
+		4E45373F20E7DC98005D794E /* ObjectiveC_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E45373920E7DC52005D794E /* ObjectiveC_Extension.framework */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		A169784D20FAF1CB00B2EE72 /* cabextract in Resources */ = {isa = PBXBuildFile; fileRef = A169784C20FAF1CB00B2EE72 /* cabextract */; };
 		A89936DE127B283A006A7581 /* WineskinWineryUpdater in Resources */ = {isa = PBXBuildFile; fileRef = A89936DD127B283A006A7581 /* WineskinWineryUpdater */; };
 		A89E94A6153EE960006F38DB /* WineskinBanner.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A89E94A5153EE960006F38DB /* WineskinBanner.jpg */; };
 		A8A76BB114E46AB700F2C8D0 /* Winery.icns in Resources */ = {isa = PBXBuildFile; fileRef = A8A76BB014E46AB700F2C8D0 /* Winery.icns */; };
 		A8EBE81B1274E83500CC9815 /* 7za in Resources */ = {isa = PBXBuildFile; fileRef = A8EBE81A1274E83500CC9815 /* 7za */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4E45373820E7DC52005D794E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E45373320E7DC52005D794E /* ObjectiveC_Extension.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4E6C51071F7E8EB700A187E9;
+			remoteInfo = ObjectiveC_Extension;
+		};
+		4E45373A20E7DC52005D794E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E45373320E7DC52005D794E /* ObjectiveC_Extension.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4E6C51101F7E8EB700A187E9;
+			remoteInfo = ObjectiveC_ExtensionTests;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -29,8 +49,12 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		4E45371E20E7DA16005D794E /* NSWineskinEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSWineskinEngine.h; sourceTree = "<group>"; };
+		4E45371F20E7DA16005D794E /* NSWineskinEngine.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSWineskinEngine.m; sourceTree = "<group>"; };
+		4E45373320E7DC52005D794E /* ObjectiveC_Extension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjectiveC_Extension.xcodeproj; path = "../../../../Meus Programas/ObjectiveC_Extension/ObjectiveC_Extension.xcodeproj"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Wineskin_Winery-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Wineskin_Winery-Info.plist"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Wineskin Winery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Wineskin Winery.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A169784C20FAF1CB00B2EE72 /* cabextract */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = cabextract; sourceTree = "<group>"; };
 		A89936DD127B283A006A7581 /* WineskinWineryUpdater */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = WineskinWineryUpdater; sourceTree = SOURCE_ROOT; };
 		A89E94A5153EE960006F38DB /* WineskinBanner.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = WineskinBanner.jpg; sourceTree = "<group>"; };
 		A8A76BB014E46AB700F2C8D0 /* Winery.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Winery.icns; sourceTree = "<group>"; };
@@ -43,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E45373F20E7DC98005D794E /* ObjectiveC_Extension.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -55,6 +80,8 @@
 			children = (
 				256AC3D80F4B6AC300CF3369 /* Wineskin_WineryAppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* Wineskin_WineryAppDelegate.m */,
+				4E45371E20E7DA16005D794E /* NSWineskinEngine.h */,
+				4E45371F20E7DA16005D794E /* NSWineskinEngine.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -88,6 +115,7 @@
 		29B97314FDCFA39411CA2CEA /* Wineskin Winery */ = {
 			isa = PBXGroup;
 			children = (
+				4E45373320E7DC52005D794E /* ObjectiveC_Extension.xcodeproj */,
 				A8F15A3215CC47A10062CC71 /* Wineskin Winery.entitlements */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -110,13 +138,14 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 				A89E94A5153EE960006F38DB /* WineskinBanner.jpg */,
 				A8A76BB014E46AB700F2C8D0 /* Winery.icns */,
+				A169784C20FAF1CB00B2EE72 /* cabextract */,
 				A8EBE81A1274E83500CC9815 /* 7za */,
 				A89936DD127B283A006A7581 /* WineskinWineryUpdater */,
 				8D1107310486CEB800E47090 /* Wineskin_Winery-Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -128,6 +157,15 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4E45373420E7DC52005D794E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4E45373920E7DC52005D794E /* ObjectiveC_Extension.framework */,
+				4E45373B20E7DC52005D794E /* ObjectiveC_ExtensionTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -171,12 +209,35 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Wineskin Winery */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 4E45373420E7DC52005D794E /* Products */;
+					ProjectRef = 4E45373320E7DC52005D794E /* ObjectiveC_Extension.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Wineskin Winery */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		4E45373920E7DC52005D794E /* ObjectiveC_Extension.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ObjectiveC_Extension.framework;
+			remoteRef = 4E45373820E7DC52005D794E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4E45373B20E7DC52005D794E /* ObjectiveC_ExtensionTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ObjectiveC_ExtensionTests.xctest;
+			remoteRef = 4E45373A20E7DC52005D794E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D1107290486CEB800E47090 /* Resources */ = {
@@ -189,6 +250,7 @@
 				A89936DE127B283A006A7581 /* WineskinWineryUpdater in Resources */,
 				A8A76BB114E46AB700F2C8D0 /* Winery.icns in Resources */,
 				A89E94A6153EE960006F38DB /* WineskinBanner.jpg in Resources */,
+				A169784D20FAF1CB00B2EE72 /* cabextract in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,6 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E45372020E7DA16005D794E /* NSWineskinEngine.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* Wineskin_WineryAppDelegate.m in Sources */,
 			);

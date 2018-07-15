@@ -48,20 +48,6 @@
         portManager.plist = [NSMutableDictionary mutableDictionaryWithContentsOfFile:plistPath];
     }
     
-    NSString* x11plistPath = [NSString stringWithFormat:@"%@/Contents/Resources/WSX11Prefs.plist",path];
-    if ([[NSFileManager defaultManager] regularFileExistsAtPath:x11plistPath])
-    {
-        portManager.x11Plist = [NSMutableDictionary mutableDictionaryWithContentsOfFile:x11plistPath];
-    }
-    else
-    {
-        x11plistPath = [NSString stringWithFormat:@"%@/Contents/Resources/WineskinEngine.bundle/X11/WSX11Prefs.plist",path];
-        if (![[NSFileManager defaultManager] regularFileExistsAtPath:x11plistPath])
-        {
-            portManager.x11Plist = [NSMutableDictionary mutableDictionaryWithContentsOfFile:x11plistPath];
-        }
-    }
-    
     return portManager;
 }
 +(NSPortManager*)managerWithCustomExePath:(NSString*)path
@@ -101,19 +87,6 @@
     }
 }
 
--(id)x11PlistObjectForKey:(NSString*)item
-{
-    return _x11Plist ? _x11Plist[item] : nil;
-}
--(void)setX11PlistObject:(id)object forKey:(NSString*)item
-{
-    if (_x11Plist) [_x11Plist setObject:object forKey:item];
-}
--(void)synchronizeX11Plist
-{
-    if (_x11Plist) [_x11Plist writeToFile:[NSString stringWithFormat:@"%@/Contents/Resources/WSX11Prefs.plist",self.path] atomically:YES];
-}
-
 -(void)setIconWithImage:(NSImage*)sourceImage
 {
     if (!sourceImage) return;
@@ -136,7 +109,7 @@
 
 -(NSString*)runWithArguments:(NSArray*)args
 {
-    NSString* appPath = [NSPathUtilities wineskinFrameworkBinForPortAtPath:self.path];
+    NSString* appPath = [NSPathUtilities wineskinLauncherBinForPortAtPath:self.path];
     return [NSTask runProgram:appPath atRunPath:nil withFlags:args wait:YES];
 }
 -(NSString*)installWinetrick:(NSString*)winetrick

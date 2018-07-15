@@ -12,27 +12,8 @@
 
 @synthesize window;
 
-// Comparator to replace @selector(localizedStandardCompare:) missing in 10.5
-static NSInteger localizedComparator(id a, id b, void* context)
-{
-	NSInteger compareOptions = NSCaseInsensitiveSearch|NSNumericSearch;
-	
-	return [(NSString*)a compare:b options:compareOptions range:NSMakeRange(0, [a length]) locale:nil]; // nil = current locale
-}
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-	/*
-	//Beta Alert
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert addButtonWithTitle:@"Ok, I got it!"];
-	[alert setMessageText:@"BETA warning"];
-	[alert setInformativeText:@"This build of Wineskin Winery is a Beta, and only downloading Beta files.\nThere are no manually installed versions of Engines and Wrappers during Beta\n\nWineskin 2.5 wrapper and WS8 engines are also still in Beta and SUBJECT TO CHANGE\n\nIt will INTERACT WITH YOUR REAL FILES and stuff from the current Release Version\n\nIf you convert your WS7 to WS8, it will convert them, and if you try to use non-Beta Wineskin Winery with Wineskin 2.4, WS8 engines will not work.\n\nWS7 and older engines WILL NOT WORK with Wineskin 2.5!\n\nYou may be best off waiting until beta is over to convert, unless you want to just test the function.\n\nIf you get a Wineskin Winery Update that no longer displays this Beta message, you will know Beta is over!\n\n Please report any problems to the News posting about this, or to the Wineskin Support Forums!"];
-	[alert setAlertStyle:NSInformationalAlertStyle];
-	[alert runModal];
-	[alert release];
-	 */
-	
 	SInt32 OSXversionMajor, OSXversionMinor;
 	if(Gestalt(gestaltSystemVersionMajor, &OSXversionMajor) == noErr && Gestalt(gestaltSystemVersionMinor, &OSXversionMinor) == noErr)
 	{
@@ -61,9 +42,10 @@ static NSInteger localizedComparator(id a, id b, void* context)
 	if (numToCheckMajor < 3 && numToCheckMinor < 5) return;
 	//check if any engines are WS5 - WS7, if not then exit
 	NSMutableArray *enginesToConvert = [NSMutableArray arrayWithCapacity:1];
-	for (NSString *item in installedEnginesList)
-		if (([[item substringWithRange:NSMakeRange(0,3)] isEqualToString:@"WS5"]) || ([[item substringWithRange:NSMakeRange(0,3)] isEqualToString:@"WS6"]) || ([[item substringWithRange:NSMakeRange(0,3)] isEqualToString:@"WS7"]))
-			if (![item isEqualToString:@"WS7Wine1.2.2ICE"]) [enginesToConvert addObject:item];
+    for (NSWineskinEngine *item in installedEnginesList) {
+		if (item.engineVersion >= 5 && item.engineVersion <= 7 && ![item.engineName isEqualToString:@"WS7Wine1.2.2ICE"])
+            [enginesToConvert addObject:item];
+    }
 	if ([enginesToConvert count] < 1) return;
 	//offer to convert all engines to WS8
 	NSAlert *alert = [[NSAlert alloc] init];
@@ -155,10 +137,25 @@ static NSInteger localizedComparator(id a, id b, void* context)
                         attributes:nil error:nil];
 	[filemgr createDirectoryAtPath:[NSHomeDirectory() stringByAppendingString:@"/Applications/Wineskin"] withIntermediateDirectories:YES
                         attributes:nil error:nil];
+    [filemgr copyItemAtPath:[applicationPath stringByAppendingString:@"/Contents/Resources/cabextract"]
+                     toPath:[wineskinFolder stringByAppendingString:@"/cabextract"] error:nil];
     
-	if (!([filemgr fileExistsAtPath:[wineskinFolder stringByAppendingString:@"/7za"]]))
-		[filemgr copyItemAtPath:[applicationPath stringByAppendingString:@"/Contents/Resources/7za"]
+    NSString* bin7zipFilePath = [wineskinFolder stringByAppendingString:@"/7za"];
+    BOOL is7zaValid = [filemgr regularFileExistsAtPath:bin7zipFilePath];
+    if (is7zaValid)
+    {
+        NSString* expectedSha256 = @"c0e54f82dcf1ec7fff6cf64874cafd46b56f48f8e09b7a2f3a667e10932525b9";
+        NSString* fileSha256 = [[NSFileManager defaultManager] checksum:NSChecksumTypeSHA256 ofFileAtPath:bin7zipFilePath];
+        
+        is7zaValid = [expectedSha256 isEqualToString:fileSha256];
+        if (!is7zaValid) [filemgr removeItemAtPath:bin7zipFilePath];
+    }
+    
+	if (!is7zaValid)
+    {
+        [filemgr copyItemAtPath:[applicationPath stringByAppendingString:@"/Contents/Resources/7za"]
                          toPath:[wineskinFolder stringByAppendingString:@"/7za"] error:nil];
+    }
 }
 - (void)checkForUpdates
 {
@@ -208,10 +205,26 @@ static NSInteger localizedComparator(id a, id b, void* context)
 	[busyWindow orderOut:self];
 }
 
+-(NSArray<NSWineskinEngine*>*)installedEnginesList {
+    BOOL hideX11Engines = hideXQuartzEnginesCheckBox.state;
+    return hideX11Engines ? installedMacDriverEnginesList : installedEnginesList;
+}
+
+-(BOOL)isXQuartzInstalled {
+    return [[NSFileManager defaultManager] fileExistsAtPath:@"/Applications/Utilities/XQuartz.app/Contents/MacOS/X11.bin"];
+}
+-(IBAction)showOrHideXQuartzEngines:(NSButton*)sender {
+    [installedEngines reloadData];
+    
+    if (!sender.state && !self.isXQuartzInstalled) {
+        [NSAlert showAlertOfType:NSAlertTypeWarning withMessage:@"You need to install XQuartz to use XQuartz-only compatible engines. You can find it here:\n\nhttps://www.xquartz.org"];
+    }
+}
+
 - (IBAction)createNewBlankWrapperButtonPressed:(id)sender
 {
-	NSString *selectedEngine = [[NSString alloc] initWithString:[installedEnginesList objectAtIndex:[installedEngines selectedRow]]];
-	[createWrapperEngine setStringValue:selectedEngine];
+	NSWineskinEngine* engine = [self.installedEnginesList objectAtIndex:[installedEngines selectedRow]];
+	[createWrapperEngine setStringValue:engine.engineName];
 	[createWrapperWindow makeKeyAndOrderFront:self];
 	[window orderOut:self];
 }
@@ -236,10 +249,8 @@ static NSInteger localizedComparator(id a, id b, void* context)
 	[self setWrapperAvailablePrompt];
 	
     // make sure an engine and master wrapper are both installed first, or have CREATE button disabled!
-	if (([installedEnginesList count] == 0) || ([[wrapperVersion stringValue] isEqualToString:@"No Wrapper Installed"]))
-		[createWrapperButton setEnabled:NO];
-	else
-		[createWrapperButton setEnabled:YES];
+    [createWrapperButton setEnabled:([self.installedEnginesList count] > 0 &&
+                                    ![[wrapperVersion stringValue] isEqualToString:@"No Wrapper Installed"])];
 	
     //check wrapper version is 2.5+, if not then do not enable button
 	int numToCheckMajor = [[[self getCurrentWrapperVersion] substringWithRange:NSMakeRange(9,1)] intValue];
@@ -269,9 +280,9 @@ static NSInteger localizedComparator(id a, id b, void* context)
 	for (NSString *itemAE in availableEngines)
 	{
 		BOOL matchFound=NO;
-		for (NSString *itemIE in installedEnginesList)
+		for (NSWineskinEngine *itemIE in installedEnginesList)
 		{
-			if ([itemAE isEqualToString:itemIE])
+			if ([itemAE isEqualToString:itemIE.engineName])
 			{
 				matchFound=YES;
 				break;
@@ -309,19 +320,19 @@ static NSInteger localizedComparator(id a, id b, void* context)
 }
 - (IBAction)minusButtonPressed:(id)sender
 {
-	NSString *selectedEngine = [[NSString alloc] initWithString:[installedEnginesList objectAtIndex:[installedEngines selectedRow]]];
+	NSWineskinEngine* engine = [self.installedEnginesList objectAtIndex:[installedEngines selectedRow]];
 	NSAlert *alert = [[NSAlert alloc] init];
 	[alert addButtonWithTitle:@"Yes"];
 	[alert addButtonWithTitle:@"Cancel"];
 	[alert setMessageText:@"Confirm Deletion"];
-	[alert setInformativeText:[NSString stringWithFormat:@"Are you sure you want to delete the engine \"%@\"",selectedEngine]];
+	[alert setInformativeText:[NSString stringWithFormat:@"Are you sure you want to delete the engine \"%@\"",engine.engineName]];
 	[alert setAlertStyle:NSInformationalAlertStyle];
 	if ([alert runModal] != NSAlertFirstButtonReturn)
     {
         return;
     }
 	//move file to trash
-	NSArray *filenamesArray = [NSArray arrayWithObject:[NSString stringWithFormat:@"%@.tar.7z",selectedEngine]];
+	NSArray *filenamesArray = [NSArray arrayWithObject:[NSString stringWithFormat:@"%@.tar.7z",engine.engineName]];
 	[[NSWorkspace sharedWorkspace] performFileOperation:NSWorkspaceRecycleOperation source:[NSString stringWithFormat:@"%@/Library/Application Support/Wineskin/Engines",NSHomeDirectory()] destination:@"" files:filenamesArray tag:nil];
 	[self refreshButtonPressed:self];
 }
@@ -358,27 +369,15 @@ static NSInteger localizedComparator(id a, id b, void* context)
 
 - (void)getInstalledEngines:(NSString *)theFilter
 {
-	//clear the array
 	[installedEnginesList removeAllObjects];
-	//get files in folder and put in array
-	NSString *folder = [NSString stringWithFormat:@"%@/Library/Application Support/Wineskin/Engines",NSHomeDirectory()];
-	NSFileManager *fm = [NSFileManager defaultManager];
-	NSArray *filesTEMP = [[fm contentsOfDirectoryAtPath:folder error:nil] sortedArrayUsingFunction:localizedComparator context:nil];
-	NSArray *files = [[filesTEMP reverseObjectEnumerator] allObjects];
-	if ([theFilter isEqualToString:@""])
-	{
-		for(NSString *file in files) // standard first
-			if ([file hasSuffix:@".tar.7z"] && (NSEqualRanges([file rangeOfString:@"CX"],NSMakeRange(NSNotFound, 0)))) [installedEnginesList addObject:[file stringByReplacingOccurrencesOfString:@".tar.7z" withString:@""]];
-		for(NSString *file in files) // CX at end of list
-			if ([file hasSuffix:@".tar.7z"] && !(NSEqualRanges([file rangeOfString:@"CX"],NSMakeRange(NSNotFound, 0)))) [installedEnginesList addObject:[file stringByReplacingOccurrencesOfString:@".tar.7z" withString:@""]];		
-	}
-	else
-	{
-		for(NSString *file in files) // standard first
-			if ([file hasSuffix:@".tar.7z"] && (NSEqualRanges([file rangeOfString:@"CX"],NSMakeRange(NSNotFound, 0))) && ([file rangeOfString:theFilter options:NSCaseInsensitiveSearch].location != NSNotFound)) [installedEnginesList addObject:[file stringByReplacingOccurrencesOfString:@".tar.7z" withString:@""]];
-		for(NSString *file in files) // CX at end of list
-			if ([file hasSuffix:@".tar.7z"] && !(NSEqualRanges([file rangeOfString:@"CX"],NSMakeRange(NSNotFound, 0))) && ([file rangeOfString:theFilter options:NSCaseInsensitiveSearch].location != NSNotFound)) [installedEnginesList addObject:[file stringByReplacingOccurrencesOfString:@".tar.7z" withString:@""]];
-	}
+    [installedEnginesList addObjectsFromArray:[NSWineskinEngine getListOfAvailableEngines]];
+    
+    installedMacDriverEnginesList = [installedEnginesList mutableCopy];
+    [installedMacDriverEnginesList replaceObjectsWithVariation:^id _Nullable(NSWineskinEngine * _Nonnull object, NSUInteger index) {
+        if (object.isCompatibleWithMacDriver) return object;
+        return nil;
+    }];
+    [installedMacDriverEnginesList removeObject:[NSNull null]];
 }
 
 - (NSArray *)getEnginesToIgnore
@@ -432,9 +431,9 @@ static NSInteger localizedComparator(id a, id b, void* context)
 	for (NSString *itemAE in availableEngines)
 	{
 		BOOL matchFound=NO;
-		for (NSString *itemIE in installedEnginesList)
+		for (NSWineskinEngine *itemIE in installedEnginesList)
 		{
-			if ([itemAE isEqualToString:itemIE])
+			if ([itemAE isEqualToString:itemIE.engineName])
 			{
 				matchFound=YES;
 				break;
@@ -505,7 +504,9 @@ static NSInteger localizedComparator(id a, id b, void* context)
 	[panel setAllowsMultipleSelection:NO];
 	NSModalResponse error = [panel runModal];
 	if (error == 0) return;
-	[engineBuildWineSource setStringValue:[[panel filenames] objectAtIndex:0]];
+    
+    NSURL* url = [[panel URLs] objectAtIndex:0];
+	[engineBuildWineSource setStringValue:url.path];
 }
 - (IBAction)engineBuildBuildButtonPressed:(id)sender
 {
@@ -615,9 +616,31 @@ static NSInteger localizedComparator(id a, id b, void* context)
 }
 - (IBAction)engineWindowViewWineReleaseNotesButtonPressed:(id)sender
 {
+    // TODO: Is there a better way to do this?
 	NSArray *tempArray = [[[engineWindowEngineList selectedItem] title] componentsSeparatedByString:@"Wine"];
-	NSString *wineVersion = [tempArray objectAtIndex:1];
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.winehq.org/announce/%@",wineVersion]]];
+    NSString *wineVersion = [tempArray objectAtIndex:1];
+    if ([wineVersion hasPrefix:@"64Bit"]) [self Wine64ReleaseNotes];
+    else if ([wineVersion hasPrefix:@"C"]) [self WineCrossoverReleaseNotes];
+    else [self WineReleaseNotes];
+}
+- (void)Wine64ReleaseNotes
+{
+    // Drop's the Wine64 for release notes
+    NSArray *tempArray = [[[engineWindowEngineList selectedItem] title] componentsSeparatedByString:@"Wine64Bit"];
+    NSString *wineVersion = [tempArray objectAtIndex:1];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.winehq.org/announce/%@",wineVersion]]];
+}
+- (void)WineReleaseNotes
+{
+    // Original version for Normal Wine versions
+    NSArray *tempArray = [[[engineWindowEngineList selectedItem] title] componentsSeparatedByString:@"Wine"];
+    NSString *wineVersion = [tempArray objectAtIndex:1];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.winehq.org/announce/%@",wineVersion]]];
+}
+-(void)WineCrossoverReleaseNotes
+{
+    // loads the Crossover Changelog
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.codeweavers.com/products/more-information/changelog"]];
 }
 - (IBAction)engineWindowEngineListChanged:(id)sender
 {
@@ -629,7 +652,7 @@ static NSInteger localizedComparator(id a, id b, void* context)
 	else [engineWindowDontPromptAsNewButton setEnabled:YES];
 	NSArray *tempArray = [[[engineWindowEngineList selectedItem] title] componentsSeparatedByString:@"Wine"];
 	NSString *wineVersion = [tempArray objectAtIndex:1];
-	if ([wineVersion hasPrefix:@"C"]) [engineWindowViewWineReleaseNotesButton setEnabled:NO];
+    if ([wineVersion hasPrefix:@"S"]) [engineWindowViewWineReleaseNotesButton setEnabled:NO];
 	else [engineWindowViewWineReleaseNotesButton setEnabled:YES];
 }
 - (IBAction)engineWindowDontPromptAsNewButtonPressed:(id)sender
@@ -970,7 +993,7 @@ static NSInteger localizedComparator(id a, id b, void* context)
 		// 777 the bundle
 		system([[NSString stringWithFormat:@"chmod 777 \"/tmp/%@.app/Contents/Frameworks/wswine.bundle\"",[createWrapperName stringValue]] UTF8String]);
 		//refresh wrapper
-		system([[NSString stringWithFormat:@"\"/tmp/%@.app/Contents/Frameworks/bin/Wineskin\" WSS-wineprefixcreate",[createWrapperName stringValue]] UTF8String]);
+		system([[NSString stringWithFormat:@"\"/tmp/%@.app/Contents/MacOS/WineskinLauncher\" WSS-wineprefixcreate",[createWrapperName stringValue]] UTF8String]);
 		//move wrapper to ~/Applications/Wineskin
 		[fm moveItemAtPath:[NSString stringWithFormat:@"/tmp/%@.app",[createWrapperName stringValue]] toPath:[NSString stringWithFormat:@"%@/Applications/Wineskin/%@.app",NSHomeDirectory(),[createWrapperName stringValue]] error:nil];
 		//put ending message
@@ -997,18 +1020,26 @@ static NSInteger localizedComparator(id a, id b, void* context)
 //***************************** OVERRIDES *************************
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
 {
-	return [installedEnginesList count];
+	return [self.installedEnginesList count];
 }
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
 {
-	return [installedEnginesList objectAtIndex:rowIndex];
+    NSString* engineName = [self.installedEnginesList objectAtIndex:rowIndex].engineName;
+    NSMutableAttributedString* text = [[NSMutableAttributedString alloc] initWithString:engineName];
+    
+    if (![self.installedEnginesList objectAtIndex:rowIndex].isCompatibleWithMacDriver) {
+        [text setFontColor:[NSColor redColor]];
+    }
+	
+    return text;
 }
 - (id)init
 {
 	self = [super init];
 	if (self)
 	{
-		installedEnginesList = [[NSMutableArray alloc] initWithObjects:@"Please Wait...",nil];
+		installedEnginesList = [[NSMutableArray alloc] init];
+        installedMacDriverEnginesList = [[NSMutableArray alloc] init];
 	}
 	return self;
 }

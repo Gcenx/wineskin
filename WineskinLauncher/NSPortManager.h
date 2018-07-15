@@ -25,7 +25,6 @@ typedef enum {
 
 @property (nonatomic) NSPortManagerType type;
 @property (nonatomic, strong) NSMutableDictionary* plist;
-@property (nonatomic, strong) NSMutableDictionary* x11Plist;
 
 +(NSPortManager*)managerForWrapperAtPath:(NSString*)path;
 +(NSPortManager*)managerForCustomExeAtPath:(NSString*)path;
@@ -47,10 +46,6 @@ typedef enum {
 -(id)plistObjectForKey:(NSString*)item;
 -(void)setPlistObject:(id)object forKey:(NSString*)item;
 -(BOOL)synchronizePlist;
-
--(id)x11PlistObjectForKey:(NSString*)item;
--(void)setX11PlistObject:(id)object forKey:(NSString*)item;
--(BOOL)synchronizeX11Plist;
 
 -(BOOL)isWinetrickAvailableForInstalling:(NSString*)winetrickName;
 
