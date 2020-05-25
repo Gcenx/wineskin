@@ -34,16 +34,16 @@ REGEDIT4
 "CaptureDisplaysForFullscreen"="y"
 
 [HKEY_CLASSES_ROOT\htmlfile\shell\open\command]
-@="C:\\windows\\system32\\winebrowser.exe -nohome %1"
+@="C:\\windows\\system32\\winebrowser.exe -nohome \"%1\""
 
 [HKEY_CLASSES_ROOT\htmlfile\shell\opennew\command]
-@="C:\\windows\\system32\\winebrowser.exe -nohome %1"
+@="C:\\windows\\system32\\winebrowser.exe -nohome \"%1\""
 
 [HKEY_CLASSES_ROOT\http\shell\open\command]
-@="C:\\windows\\system32\\winebrowser.exe -nohome %1"
+@="C:\\windows\\system32\\winebrowser.exe -nohome \"%1\""
 
 [HKEY_CLASSES_ROOT\https\shell\open\command]
-@="C:\\windows\\system32\\winebrowser.exe -nohome %1"
+@="C:\\windows\\system32\\winebrowser.exe -nohome \"%1\""
 
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders]
 "AppData"="C:\\users\\Wineskin\\Application Data"
